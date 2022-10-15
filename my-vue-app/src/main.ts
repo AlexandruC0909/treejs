@@ -1,16 +1,32 @@
 import './style.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const scene = new THREE.Scene();
-
+const objLoader = new OBJLoader();
+const mtlLoader = new MTLLoader()
 const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
 const material = new THREE.MeshStandardMaterial({ color: 'light-blue' });
-
+mtlLoader.load(
+  '/src/assets/obj/iphone.mtl',
+  (materials) => {
+      materials.preload()
+      const objLoader = new OBJLoader()
+      objLoader.setMaterials(materials)
+      objLoader.load(
+          '/src/assets/obj/iphone.obj',
+          (object) => {
+              scene.add(object)
+          }
+      )
+  }
+)
 const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
+//scene.add(mesh);
 
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg')!, antialias: true });
 
